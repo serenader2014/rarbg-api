@@ -120,16 +120,16 @@ function parseTable($, table) {
   const data = list.map((i, item) => {
     const result = {}
     $(item).find('td').map((idx, td) => {
-      const key = headers[idx] || 'comments'
+      const key = headers[idx].toLowerCase() || 'comments'
       const $td = $(td)
 
       switch (key) {
-        case 'Cat.': {
+        case 'cat.': {
           const categoryId = $td.find('a').attr('href').match(categoryIdReg)[1]
           result.category = getCategory(categoryId)
           break
         }
-        case 'File': {
+        case 'file': {
           const title = $td.find('a').eq(0)
           const meta = $td.find('span').last()
           const link = title.attr('href')
@@ -152,7 +152,7 @@ function parseTable($, table) {
           result.torrent = `${BASE_URL}/download.php?id=${id}&f=${title.text()}.torrent`
           break
         }
-        case 'Rating': {
+        case 'rating': {
           const img = $td.find('img')
           let rating;
           if (img.length) {
@@ -163,11 +163,11 @@ function parseTable($, table) {
           result[key] = rating
           break
         }
-        case 'S.': {
+        case 's.': {
           result.seeders = $td.text()
           break
         }
-        case 'L.': {
+        case 'l.': {
           result.leechers = $td.text()
           break
         }
@@ -183,8 +183,49 @@ function parseTable($, table) {
   return data.toArray()
 }
 
+function parsePaginationToQueryString(obj) {
+  const defaultOptions = {
+    by: 'DESC',
+    order: 'data',
+    page: 1
+  }
+
+  const o = deepClone({}, defaultOptions, obj)
+
+  return Object.keys(o).map(item => `${item}=${o[item]}`)
+}
+
+function parseCategory(category) {
+  if (typeof category === 'string') {
+    category = [category]
+  } else {
+    category = category || []
+  }
+  let categoryIds = []
+
+  category.forEach(c => {
+    if (typeof c === 'string') {
+      categoryIds = categoryIds.concat(categories[c])
+    } else {
+      categoryIds.push(c)
+    }
+  })
+
+  const tmpMap = {}
+  return categoryIds.filter(item => {
+    if (!tmpMap[item]) {
+      tmpMap[item] = true
+      return true
+    } else {
+      return false
+    }
+  }).map(item => `category[]=${item}`)
+}
+
 module.exports = {
   parseTable,
   getCategory,
   request,
+  parsePaginationToQueryString,
+  parseCategory,
 }

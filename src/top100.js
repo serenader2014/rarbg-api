@@ -5,32 +5,13 @@ const categories = require('./constants').categories
 const utils = require('./utils')
 const parseTable = utils.parseTable
 const request = utils.request
+const parsePagination = utils.parsePaginationToQueryString
+const parseCategory = utils.parseCategory
 
 module.exports = function listTop100(category) {
-  if (typeof category === 'string') {
-    category = [category]
-  } else {
-    category = category || []
-  }
-  let categoryIds = []
 
-  category.forEach(c => {
-    if (typeof c === 'string') {
-      categoryIds = categoryIds.concat(categories[c])
-    } else {
-      categoryIds.push(c)
-    }
-  })
-
-  const tmpMap = {}
-  const queryString = categoryIds.filter(item => {
-    if (!tmpMap[item]) {
-      tmpMap[item] = true
-      return true
-    } else {
-      return false
-    }
-  }).map(item => `category[]=${item}`).join('&')
+  const categoryArr = parseCategory(category)
+  const queryString = categoryArr.join('&')
 
   return request({
     url: queryString ? `${TOP_100_URL}?${queryString}` : TOP_100_URL,
