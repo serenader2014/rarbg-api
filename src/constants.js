@@ -17,6 +17,8 @@ var categories = {
 
 const categoryIdReg = /\?category=(\d+)$/
 const ratingReg = /.+(\d+).png$/
+const idReg = /torrent\/([0-9a-zA-Z]+)$/
+const thumbnailReg = /<img src=\\'(.+)\\'/
 
 module.exports = {
   BASE_URL,
@@ -25,4 +27,6 @@ module.exports = {
   categories,
   categoryIdReg,
   ratingReg,
+  idReg,
+  thumbnailReg,
 }

@@ -9,6 +9,8 @@ const BASE_URL = constants.BASE_URL
 const UA = constants.UA
 const categoryIdReg = constants.categoryIdReg
 const ratingReg = constants.ratingReg
+const idReg = constants.idReg
+const thumbnailReg = constants.thumbnailReg
 
 const toString = Object.prototype.toString
 
@@ -111,8 +113,7 @@ function getCategory(id) {
   return result
 }
 
-function parseTable($, selector) {
-  const table = $(selector)
+function parseTable($, table) {
   const tr = table.find('tr')
   const headers = tr.eq(0).find('td').map((i, header) => $(header).text())
   const list = tr.slice(1)
@@ -123,36 +124,48 @@ function parseTable($, selector) {
       const $td = $(td)
 
       switch (key) {
-        case 'Cat.':
-        const categoryId = $td.find('a').attr('href').match(categoryIdReg)[1]
-        result[key] = getCategory(categoryId)
-        break
-        case 'File':
-        const title = $td.find('a').eq(0).text()
-        const meta = $td.find('span').last()
-        if (meta.length) {
-          const text = meta.text()
-          const tmpArr = text.split('IMDB: ')
+        case 'Cat.': {
+          const categoryId = $td.find('a').attr('href').match(categoryIdReg)[1]
+          result[key] = getCategory(categoryId)
+          break
+        }
+        case 'File': {
+          const title = $td.find('a').eq(0)
+          const meta = $td.find('span').last()
+          const link = title.attr('href')
+          const thumbnail = title.attr('onmouseover').match(thumbnailReg)[1]
+          const id = link.match(idReg)[1]
 
-          result.meta = {
-            genres: tmpArr[0].split(', '),
-            IMDB: tmpArr[1]
+          if (meta.length) {
+            const text = meta.text()
+            const tmpArr = text.split('IMDB: ')
+
+            result.meta = {
+              genres: tmpArr[0].split(', '),
+              IMDB: tmpArr[1]
+            }
           }
+          result[key] = title.text()
+          result.id = id
+          result.link = `${BASE_URL}${link}`
+          result.thumbnail = thumbnail
+          result.torrent = `${BASE_URL}/download.php?id=${id}&f=${title.text()}.torrent`
+          break
         }
-        result[key] = title
-        break
-        case 'Rating':
-        const img = $td.find('img')
-        let rating;
-        if (img.length) {
-          rating = $td.find('img').attr('src').match(ratingReg)[1]
-        } else {
-          rating = '- -'
+        case 'Rating': {
+          const img = $td.find('img')
+          let rating;
+          if (img.length) {
+            rating = $td.find('img').attr('src').match(ratingReg)[1]
+          } else {
+            rating = '- -'
+          }
+          result[key] = rating
+          break
         }
-        result[key] = rating
-        break
-        default:
-        result[key] = $td.text()
+        default: {
+          result[key] = $td.text()
+        }
       }
     })
 

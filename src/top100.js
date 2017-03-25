@@ -10,7 +10,8 @@ module.exports = function listTop100() {
     url: `${TOP_100_URL}`,
   }).then(body => {
     const $ = cheerio.load(body)
+    const table = $('table.lista2t')
 
-    return parseTable($, 'table.lista2t')
+    return parseTable($, table)
   })
 }
