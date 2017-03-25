@@ -126,7 +126,7 @@ function parseTable($, table) {
       switch (key) {
         case 'Cat.': {
           const categoryId = $td.find('a').attr('href').match(categoryIdReg)[1]
-          result[key] = getCategory(categoryId)
+          result.category = getCategory(categoryId)
           break
         }
         case 'File': {
@@ -161,6 +161,14 @@ function parseTable($, table) {
             rating = '- -'
           }
           result[key] = rating
+          break
+        }
+        case 'S.': {
+          result.seeders = $td.text()
+          break
+        }
+        case 'L.': {
+          result.leechers = $td.text()
           break
         }
         default: {

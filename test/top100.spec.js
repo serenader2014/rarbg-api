@@ -14,7 +14,7 @@ describe('list top 100 api test', function() {
   it('should list 100 tv records', function() {
     return top100('tv').then(data => {
       data.length.should.equal(100)
-      data[0]['Cat.'].should.equal('tv')
+      data[0].category.should.equal('tv')
     })
   })
 
