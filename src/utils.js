@@ -1,4 +1,8 @@
 const r = require('request')
+
+const jar = r.jar()
+r.defaults({ jar: jar })
+
 const constants = require('./constants')
 const categories = constants.categories
 const BASE_URL = constants.BASE_URL
@@ -35,6 +39,41 @@ function deepClone() {
   return target
 }
 
+
+// borrowed from:  https://github.com/same31/rarbgto-api/blob/master/lib/search.js#L8
+function bypassAntiBotChecks (url) {
+  const cookies = jar.getCookies(url)
+  let cookieExpla = getCookie('expla')
+
+  cookieExpla = cookieExpla && parseInt(cookieExpla.value) || 0
+
+  function getCookie (key) {
+    return cookies.find(cookie => cookie.key === key)
+  }
+
+  function setCookie (key, value, seconds) {
+    let date
+    value = (typeof key !== 'undefined' ? key + '=' : '') + value
+    if (seconds) {
+      date = new Date()
+      date.setTime(date.getTime() + seconds * 1000)
+      value += '; expires=' + date.toGMTString()
+    }
+    jar.setCookie(r.cookie(value), url)
+  }
+
+  setCookie('vDVPaqSe', 'r9jSB2Wk', 5 * 24 * 60 * 60)
+
+  if (cookieExpla < 4) {
+    setCookie('expla', cookieExpla + 1, 45)
+    if (!getCookie('expla3')) {
+      setCookie(undefined, 'tcc')
+      setCookie('expla3', 1, 3)
+    }
+  }
+}
+
+
 const defaultRequestOptions = {
   method: 'GET',
   headers: {
@@ -48,6 +87,8 @@ function request(options) {
 
   return new Promise((resolve, reject) => {
     r(opts, (err, res, body) => {
+      bypassAntiBotChecks(opts.url)
+
       if (err) {
         reject(err)
       } else {
@@ -70,7 +111,8 @@ function getCategory(id) {
   return result
 }
 
-function parseTable($, table) {
+function parseTable($, selector) {
+  const table = $(selector)
   const tr = table.find('tr')
   const headers = tr.eq(0).find('td').map((i, header) => $(header).text())
   const list = tr.slice(1)
@@ -82,35 +124,35 @@ function parseTable($, table) {
 
       switch (key) {
         case 'Cat.':
-          const categoryId = $td.find('a').attr('href').match(categoryIdReg)[1]
-          result[key] = getCategory(categoryId)
-          break
+        const categoryId = $td.find('a').attr('href').match(categoryIdReg)[1]
+        result[key] = getCategory(categoryId)
+        break
         case 'File':
-          const title = $td.find('a').eq(0).text()
-          const meta = $td.find('span').last()
-          if (meta.length) {
-            const text = meta.text()
-            const tmpArr = text.split('IMDB: ')
+        const title = $td.find('a').eq(0).text()
+        const meta = $td.find('span').last()
+        if (meta.length) {
+          const text = meta.text()
+          const tmpArr = text.split('IMDB: ')
 
-            result.meta = {
-              genres: tmpArr[0].split(', '),
-              IMDB: tmpArr[1]
-            }
+          result.meta = {
+            genres: tmpArr[0].split(', '),
+            IMDB: tmpArr[1]
           }
-          result[key] = title
-          break
+        }
+        result[key] = title
+        break
         case 'Rating':
-          const img = $td.find('img')
-          let rating;
-          if (img.length) {
-            rating = $td.find('img').attr('src').match(ratingReg)[1]
-          } else {
-            rating = '- -'
-          }
-          result[key] = rating
-          break
+        const img = $td.find('img')
+        let rating;
+        if (img.length) {
+          rating = $td.find('img').attr('src').match(ratingReg)[1]
+        } else {
+          rating = '- -'
+        }
+        result[key] = rating
+        break
         default:
-          result[key] = $td.text()
+        result[key] = $td.text()
       }
     })
 

@@ -11,6 +11,6 @@ module.exports = function listTop100() {
   }).then(body => {
     const $ = cheerio.load(body)
 
-    return parseTable($, $('table.lista2t'))
+    return parseTable($, 'table.lista2t')
   })
 }
