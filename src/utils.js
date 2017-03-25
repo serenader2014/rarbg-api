@@ -79,8 +79,11 @@ function bypassAntiBotChecks (url) {
 const defaultRequestOptions = {
   method: 'GET',
   headers: {
-    'User-Agent': UA
-  }
+    'User-Agent': UA,
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Referer': 'https://rarbg.to/torrents.php'
+  },
+  gzip: true
 }
 
 function request(options) {
@@ -184,6 +187,7 @@ function parseTable($, table) {
 }
 
 function parsePaginationToQueryString(obj) {
+  if (!obj) return []
   const defaultOptions = {
     by: 'DESC',
     order: 'data',

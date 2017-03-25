@@ -1,6 +1,7 @@
 const BASE_URL = 'https://rarbg.to'
 
 const TOP_100_URL = '/top100.php'
+const SEARCH_URL = '/torrents.php'
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36'
 
@@ -23,6 +24,7 @@ const thumbnailReg = /<img src=\\'(.+)\\'/
 module.exports = {
   BASE_URL,
   TOP_100_URL,
+  SEARCH_URL,
   UA,
   categories,
   categoryIdReg,

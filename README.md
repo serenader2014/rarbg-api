@@ -5,7 +5,7 @@ This is an unofficial nodejs api wrapper for rarbg.to website.
 
 # API
 
-### .listTop100([category: String|Array, pagination: Object]): Array
+### .listTop100([category: String|Array]): Array
 
 List the Top 100 torrent.
 
@@ -19,13 +19,6 @@ List the Top 100 torrent.
 
     eg: `api.listTop100()`, `api.listTop100(['tv'])` , `api.listTop100([14, 41])`, `api.listTop100(['movies', '18'])`
 
-- **pagination**
-    + Object
-    + Optional
-
-    Pagination options. More details about pagination please refer to [pagination section](#pagination)
-
-    eg: `api.listTop100(null, { order: 'size' })`
 
 #### Returns
 

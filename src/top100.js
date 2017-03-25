@@ -1,11 +1,9 @@
 const cheerio = require('cheerio')
 
 const TOP_100_URL = require('./constants').TOP_100_URL
-const categories = require('./constants').categories
 const utils = require('./utils')
 const parseTable = utils.parseTable
 const request = utils.request
-const parsePagination = utils.parsePaginationToQueryString
 const parseCategory = utils.parseCategory
 
 module.exports = function listTop100(category) {
