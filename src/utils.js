@@ -1,235 +1,72 @@
-const r = require('request')
+const https = require('https')
+const querystring = require('querystring')
+const baseUrl = require('./constants').BASE_URL
 
-const jar = r.jar()
-r.defaults({ jar: jar })
-
-const constants = require('./constants')
-const categories = constants.categories
-const BASE_URL = constants.BASE_URL
-const UA = constants.UA
-const categoryIdReg = constants.categoryIdReg
-const ratingReg = constants.ratingReg
-const idReg = constants.idReg
-const thumbnailReg = constants.thumbnailReg
-
-const toString = Object.prototype.toString
-
-function isObject(target) {
-  return toString.call(target) === '[object Object]'
-}
-
-function isArray(target) {
-  return toString.call(target) === '[object Array]'
-}
-
-function deepClone() {
-  const target = arguments[0]
-  const lists = [].slice.call(arguments, 1)
-  lists.forEach(item => {
-    if (!isObject(item)) return
-
-    for (const i of Object.keys(item)) {
-      const value = item[i]
-      if (isObject(value)) {
-        target[i] = deepClone({}, target[i], value)
-      } else {
-        target[i] = value
-      }
-    }
-  })
-
-  return target
-}
-
-
-// borrowed from:  https://github.com/same31/rarbgto-api/blob/master/lib/search.js#L8
-function bypassAntiBotChecks (url) {
-  const cookies = jar.getCookies(url)
-  let cookieExpla = getCookie('expla')
-
-  cookieExpla = cookieExpla && parseInt(cookieExpla.value) || 0
-
-  function getCookie (key) {
-    return cookies.find(cookie => cookie.key === key)
-  }
-
-  function setCookie (key, value, seconds) {
-    let date
-    value = (typeof key !== 'undefined' ? key + '=' : '') + value
-    if (seconds) {
-      date = new Date()
-      date.setTime(date.getTime() + seconds * 1000)
-      value += '; expires=' + date.toGMTString()
-    }
-    jar.setCookie(r.cookie(value), url)
-  }
-
-  setCookie('vDVPaqSe', 'r9jSB2Wk', 5 * 24 * 60 * 60)
-
-  if (cookieExpla < 4) {
-    setCookie('expla', cookieExpla + 1, 45)
-    if (!getCookie('expla3')) {
-      setCookie(undefined, 'tcc')
-      setCookie('expla3', 1, 3)
+const token = (() => {
+  let currentToken = ''
+  return {
+    get() {
+      return currentToken
+    },
+    set(newToken) {
+      currentToken = newToken
+      return currentToken
     }
   }
-}
+})()
 
-
-const defaultRequestOptions = {
-  method: 'GET',
-  headers: {
-    'User-Agent': UA,
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Referer': 'https://rarbg.to/torrents.php'
-  },
-  gzip: true
-}
-
-function request(options) {
-  const opts = deepClone({}, defaultRequestOptions, options)
-  opts.url = `${BASE_URL}${options.url}`
-
+function r(url, options) {
   return new Promise((resolve, reject) => {
-    r(opts, (err, res, body) => {
-      bypassAntiBotChecks(opts.url)
-
-      if (err) {
-        reject(err)
-      } else {
-        resolve(body)
-      }
-    })
-  })
-}
-
-function getCategory(id) {
-  let result = ''
-  for (let category of Object.keys(categories)) {
-    const ids = categories[category]
-    if (~ids.indexOf(Number(id))) {
-      result = category
-      break
-    }
-  }
-
-  return result
-}
-
-function parseTable($, table) {
-  const tr = table.find('tr')
-  const headers = tr.eq(0).find('td').map((i, header) => $(header).text())
-  const list = tr.slice(1)
-  const data = list.map((i, item) => {
-    const result = {}
-    $(item).find('td').map((idx, td) => {
-      const key = headers[idx].toLowerCase() || 'comments'
-      const $td = $(td)
-
-      switch (key) {
-        case 'cat.': {
-          const categoryId = $td.find('a').attr('href').match(categoryIdReg)[1]
-          result.category = getCategory(categoryId)
-          break
-        }
-        case 'file': {
-          const title = $td.find('a').eq(0)
-          const meta = $td.find('span').last()
-          const link = title.attr('href')
-          const thumbnail = title.attr('onmouseover').match(thumbnailReg)[1]
-          const id = link.match(idReg)[1]
-
-          if (meta.length) {
-            const text = meta.text()
-            const tmpArr = text.split('IMDB: ')
-
-            result.meta = {
-              genres: tmpArr[0].split(', '),
-              IMDB: tmpArr[1]
-            }
-          }
-          result[key] = title.text()
-          result.id = id
-          result.link = `${BASE_URL}${link}`
-          result.thumbnail = thumbnail
-          result.torrent = `${BASE_URL}/download.php?id=${id}&f=${title.text()}.torrent`
-          break
-        }
-        case 'rating': {
-          const img = $td.find('img')
-          let rating;
-          if (img.length) {
-            rating = $td.find('img').attr('src').match(ratingReg)[1]
-          } else {
-            rating = '- -'
-          }
-          result[key] = rating
-          break
-        }
-        case 's.': {
-          result.seeders = $td.text()
-          break
-        }
-        case 'l.': {
-          result.leechers = $td.text()
-          break
-        }
-        default: {
-          result[key] = $td.text()
-        }
-      }
+    const qs = options ? `?${querystring.stringify(options)}` : ''
+    const finalUrl = `${url}${qs}`
+    const req = https.get(finalUrl, res => {
+      let body = ''
+      res.on('data', chunk => {
+        body += chunk
+      })
+      res.on('end', () => {
+        try {
+          body = JSON.parse(body)
+        } catch (e) {}
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          body: body
+        })
+      })
     })
 
-    return result
+    req.on('error', err => {
+      reject(err)
+    })
+    req.end()
   })
-
-  return data.toArray()
 }
 
-function parsePaginationToQueryString(obj) {
-  if (!obj) return []
-  const defaultOptions = {
-    by: 'DESC',
-    order: 'data',
-    page: 1
-  }
-
-  const o = deepClone({}, defaultOptions, obj)
-
-  return Object.keys(o).map(item => `${item}=${o[item]}`)
+function getToken() {
+  return r(baseUrl, {
+    get_token: 'get_token'
+  }).then(res => res.body.token)
 }
 
-function parseCategory(category) {
-  if (typeof category === 'string') {
-    category = [category]
-  } else {
-    category = category || []
-  }
-  let categoryIds = []
-
-  category.forEach(c => {
-    if (typeof c === 'string') {
-      categoryIds = categoryIds.concat(categories[c])
+function request(url, options) {
+  return new Promise(resolve => {
+    resolve(token.get() || getToken())
+  }).then(currentToken => {
+    options = options || {}
+    options.token = currentToken
+    return r(url, options)
+  }).then(res => {
+    if (res.body && res.body.error && res.body.error_code == 4) {
+      // token expired
+      token.set(null)
+      return request(url, options)
     } else {
-      categoryIds.push(c)
+      return res
     }
   })
-
-  const tmpMap = {}
-  return categoryIds.filter(item => {
-    if (!tmpMap[item]) {
-      tmpMap[item] = true
-      return true
-    } else {
-      return false
-    }
-  }).map(item => `category[]=${item}`)
 }
 
 module.exports = {
-  parseTable,
-  getCategory,
-  request,
-  parsePaginationToQueryString,
-  parseCategory,
+  request
 }

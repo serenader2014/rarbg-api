@@ -1,7 +1,7 @@
-const top100 = require('./src/top100')
+const list = require('./src/list')
 const search = require('./src/search')
 
 module.exports = {
-  listTop100: top100,
+  list: list,
   search: search
 }
