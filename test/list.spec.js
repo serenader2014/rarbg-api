@@ -4,7 +4,7 @@ const constants = require('../src/constants')
 should()
 
 
-describe('list top 100 api test', function() {
+describe('list api test', function() {
   this.timeout(60000)
   it('should list torrent', function() {
     return list().then(data => {
@@ -29,6 +29,13 @@ describe('list top 100 api test', function() {
     return list({ sort: 'seeders' }).then(data => {
       data.length.should.above(0)
       data[0].seeders.should.above(data[1].seeders)
+    })
+  })
+
+  it('should list torrent using simple json format', function() {
+    return list({ format: 'json' }).then(data => {
+      data.length.should.above(0)
+      Object.keys(data[0]).length.should.equal(3)
     })
   })
 })
