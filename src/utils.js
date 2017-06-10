@@ -19,6 +19,7 @@ function r(url, options) {
   return new Promise((resolve, reject) => {
     const qs = options ? `?${querystring.stringify(options)}` : ''
     const finalUrl = `${url}${qs}`
+    console.log(finalUrl)
     const req = https.get(finalUrl, res => {
       let body = ''
       res.on('data', chunk => {
@@ -46,7 +47,7 @@ function r(url, options) {
 function getToken() {
   return r(baseUrl, {
     get_token: 'get_token'
-  }).then(res => res.body.token)
+  }).then(res => token.set(res.body.token))
 }
 
 function request(url, options) {
@@ -67,6 +68,59 @@ function request(url, options) {
   })
 }
 
+function proceedExtraParams(params) {
+  params = params || {}
+  const defaultParams = {
+    category: null,
+    limit: 25,
+    sort: 'last',
+    min_seeders: null,
+    min_leechers: null,
+    format: 'json_extended',
+    ranked: null,
+    app_id: 'rarbg-api-nodejs'
+  }
+
+  const result = {}
+  Object.keys(defaultParams).forEach(key => {
+    const value = params[key] || defaultParams[key]
+    if (!value) return
+    result[key] = value
+  })
+
+  if (result.category) {
+    result.category = result.category.join(';')
+  }
+
+  if (!~[25, 50, 100].indexOf(result.limit)) {
+    result.limit =  25
+  }
+
+  if (!~['last', 'seeders', 'leechers'].indexOf(result.sort)) {
+    result.sort = 'last'
+  }
+
+  if (typeof result.min_leechers !== 'number') {
+    delete result.min_leechers
+  }
+
+  if (typeof result.min_seeders !== 'number') {
+    delete result.min_seeders
+  }
+
+  if (!~['json', 'json_extended'].indexOf(result.format)) {
+    result.format = 'json_extended'
+  }
+
+  if (result.ranked != 0) {
+    delete result.ranked
+  }
+
+  console.log(result)
+  return result
+}
+
 module.exports = {
-  request
+  request,
+  proceedExtraParams
 }
