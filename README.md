@@ -5,90 +5,175 @@ This is an unofficial nodejs api wrapper for rarbg.to website.
 
 # API
 
-### .listTop100([category: String|Array]): Array
+### .list([options: Object]): Array
 
-List the Top 100 torrent.
+List torrent.
 
 #### Parameters
 
-- **category**
-    + String | Array[String|Number]
+- **options**
+    + Object
     + Optional
     
-    Which category to be filterd. The value can be a string, or an array contains strings or numbers. If using string as the value, the value must be one of these: `['tv', 'movies', 'xxx', 'games', 'music', 'software', 'nonxxx', 'ebooks']`
-
-    eg: `api.listTop100()`, `api.listTop100(['tv'])` , `api.listTop100([14, 41])`, `api.listTop100(['movies', '18'])`
+    See [additional options section](#additional-options)
 
 
 #### Returns
 
-The api returns a list of torrent. The details of the list structure can be found at [list data format](#list-structure)
+The api returns a promise which will resolve a list of torrent.
 
-# Pagination
+### .search(keyword[, options, type]): Array
+
+Search torrent using a keyword.
+
+#### Parameters
+
+- **keyword**
+    + String
+
+    Specify a keyword to search.
+
+- **options**
+    + Object
+    + Optional
+
+    See [additional options section](#additional-options)
+
+- **type**
+    + String
+    + Optional
+    
+    Specify a search mode to use. Available type is: `['imdb', 'tvdb', 'themoviedb', 'tvrage']`. If search type is provided, the search keyword is a specific id, for example, if you provide `imdb` search type, the keyword must be a `imdb` id. Eg: `search('tt0944947', null, 'imdb')`. 
+
+#### Returns
+
+The api returns a promise which will resolve the search result.
+
+# Additional options
+
+Some of the apis support category filtering and sorting, and other options. All available options are: 
+
+```javascript
+  const defaultParams = {
+    category: null,
+    limit: 25,
+    sort: 'last',
+    min_seeders: null,
+    min_leechers: null,
+    format: 'json_extended',
+    ranked: null,
+  }
+```
+
+### category
+
+You can specify a category to filter the torrent. Category infomations can be imported by `require('./index').CATEGORY`. This options support an array.
+
+Eg: 
+
+```javascript
+const rarbgApi = require('./index')
+
+rarbgApi.list({
+  category: rarbgApi.CATEGORY.MOVIES
+}).then(data => console.log(data))
+```
+
+The above example will list latest movie torrents.
+
+### limit
+
+Limit the result torrent's size. Default size is 25, all supported options are: **25, 50, 100**
+
+Eg:
+
+```javascript
+const rarbgApi = require('./index')
+
+rarbgApi.list({
+  limit: 50
+}).then(data => console.log(data.length))
+```
+
+### sort
+
+Specify the sorting. Default sorting is `last`. Available options are: **last, seeders, leechers**
+
+Eg: 
+
+```javascript
+const rarbgApi = require('./index')
+
+rarbgApi.list({
+  sort: 'seeders'
+}).then(data => console.log(data))
+```
+
+### min_seeders, min_leechers
+
+Filtering the torrent by specify the torrent's minimal seeders or minimal leechers. It's value is a number. Default is `null`.
+
+Eg:
+
+```javascript
+const rarbgApi = require('./index')
+rarbgApi.list({
+  min_seeders: 100
+}).then(data => console.log(data))
+```
+
+### format
+
+Specify which format will the api returns. Default is `json_extended`, which will include the detail infomations of each torrent. Other supported option is **json**.
+
+The `json_extended` format is:
 
 ```json
-{
-    "by": "DESC",
-    "order": "data",
-    "page": 1
+{ 
+    title: 'Logan.2017.1080p.WEB-DL.DD5.1.H264-FGT',
+    category: 'Movies/x264/1080',
+    download: 'magnet:?xt=urn:btih:d2d6a72b60cdb2cc5e80d3277d89d5df18c3ecbc&dn=Logan.2017.1080p.WEB-DL.DD5.1.H264-FGT&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2710&tr=udp%3A%2F%2F9.rarbg.to%3A2710&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce',
+    seeders: 848,
+    leechers: 116,
+    size: 5100226269,
+    pubdate: '2017-05-15 09:37:27 +0000',
+    episode_info: { 
+        imdb: 'tt3315342',
+        tvrage: null,
+        tvdb: null,
+        themoviedb: '263115' 
+    }
 }
 ```
 
-- `by`: Value can be: `['DESC', 'ASC']`
-- `order`: Value can be: `['filename', 'data', 'size', 'seeders', 'leechers']`
-- `page`: page number
 
-# Resource structure
-
-## List structure
+The `json` format is:
 
 ```json
-[
-  {
-    "category": "tv",
-    "meta": {
-      "genres": [
-        "Action",
-        "Adventure",
-        "Drama",
-        "Sci-Fi "
-      ],
-      "IMDB": "8.1/10"
-    },
-    "file": "The.Flash.2014.S03E17.HDTV.x264-LOL[ettv]",
-    "id": "dyizcv9",
-    "link": "https://rarbg.to/torrent/dyizcv9",
-    "thumbnail": "//dyncdn.me/static/20/tvdb/191692_small.jpg",
-    "torrent": "https://rarbg.to/download.php?id=dyizcv9&f=The.Flash.2014.S03E17.HDTV.x264-LOL[ettv].torrent",
-    "added": "2017-03-22 02:01:09",
-    "size": "271.29 MB",
-    "seeders": "3413",
-    "leechers": "370",
-    "comments": "4",
-    "rating": "5",
-    "uploader": "ettv"
-  },
-  {
-    "category": "movies",
-    "meta": {
-      "genres": [
-        "Horror",
-        "Thriller "
-      ],
-      "IMDB": "7.5/10"
-    },
-    "file": "Split.2016.1080p.KORSUB.HDRip.x264.AAC2.0-STUTTERSHIT",
-    "id": "ef7t5lq",
-    "link": "https://rarbg.to/torrent/ef7t5lq",
-    "thumbnail": "//dyncdn.me/mimages/318327/over_opt.jpg",
-    "torrent": "https://rarbg.to/download.php?id=ef7t5lq&f=Split.2016.1080p.KORSUB.HDRip.x264.AAC2.0-STUTTERSHIT.torrent",
-    "added": "2017-03-23 04:46:47",
-    "size": "4.20 GB",
-    "seeders": "2962",
-    "leechers": "1175",
-    "comments": "215",
-    "rating": "3",
-    "uploader": "Scene"
-  }
-]
+{
+    filename: 'Real.Time.With.Bill.Maher.2017.06.09.1080p.WEB.h264-TBS[rartv]',
+    category: 'TV HD Episodes',
+    download: 'magnet:?xt=urn:btih:f6afb0028270ccca6d4535be4c42a0583a5a5737&dn=Real.Time.With.Bill.Maher.2017.06.09.1080p.WEB.h264-TBS%5Brartv%5D&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2710&tr=udp%3A%2F%2F9.rarbg.to%3A2710&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce' 
+}
 ```
+
+
+### ranked
+
+By default the api will return only ranked torrents ( internal ) , scene releases + -rarbg releases + -rartv releases.
+
+If you want other groups included in the results use the ranked parameter with a value of 0 to get them included.
+
+
+# Limitation
+
+Due to the rarbg api's limitation, you may encounter error like:
+
+```json
+{
+  "error": "Too many requests per second. Maximum requests allowed are 1req/2sec Please try again later!"
+  "error_code": 5
+}
+```
+
+The api is limit to 1req/2sec, so you should control the frequency.
