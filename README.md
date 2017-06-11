@@ -130,18 +130,18 @@ The `json_extended` format is:
 
 ```json
 { 
-    title: 'Logan.2017.1080p.WEB-DL.DD5.1.H264-FGT',
-    category: 'Movies/x264/1080',
-    download: 'magnet:?xt=urn:btih:d2d6a72b60cdb2cc5e80d3277d89d5df18c3ecbc&dn=Logan.2017.1080p.WEB-DL.DD5.1.H264-FGT&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2710&tr=udp%3A%2F%2F9.rarbg.to%3A2710&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce',
-    seeders: 848,
-    leechers: 116,
-    size: 5100226269,
-    pubdate: '2017-05-15 09:37:27 +0000',
-    episode_info: { 
-        imdb: 'tt3315342',
+    "title": "Logan.2017.1080p.WEB-DL.DD5.1.H264-FGT",
+    "category": "Movies/x264/1080",
+    "download": "magnet:?xt=urn:btih:d2d6a72b60cdb2cc5e80d3277d89d5df18c3ecbc&dn=Logan.2017.1080p.WEB-DL.DD5.1.H264-FGT&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2710&tr=udp%3A%2F%2F9.rarbg.to%3A2710&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce",
+    "seeders": 848,
+    "leechers": 116,
+    "size": 5100226269,
+    "pubdate": "2017-05-15 09:37:27 +0000",
+    "episode_info": { 
+        imdb: "tt3315342",
         tvrage: null,
         tvdb: null,
-        themoviedb: '263115' 
+        themoviedb: "263115" 
     }
 }
 ```
@@ -151,9 +151,9 @@ The `json` format is:
 
 ```json
 {
-    filename: 'Real.Time.With.Bill.Maher.2017.06.09.1080p.WEB.h264-TBS[rartv]',
-    category: 'TV HD Episodes',
-    download: 'magnet:?xt=urn:btih:f6afb0028270ccca6d4535be4c42a0583a5a5737&dn=Real.Time.With.Bill.Maher.2017.06.09.1080p.WEB.h264-TBS%5Brartv%5D&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2710&tr=udp%3A%2F%2F9.rarbg.to%3A2710&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce' 
+    "filename": "Real.Time.With.Bill.Maher.2017.06.09.1080p.WEB.h264-TBS[rartv]",
+    "category": "TV HD Episodes",
+    "download": "magnet:?xt=urn:btih:f6afb0028270ccca6d4535be4c42a0583a5a5737&dn=Real.Time.With.Bill.Maher.2017.06.09.1080p.WEB.h264-TBS%5Brartv%5D&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2710&tr=udp%3A%2F%2F9.rarbg.to%3A2710&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce"
 }
 ```
 
@@ -171,7 +171,7 @@ Due to the rarbg api's limitation, you may encounter error like:
 
 ```json
 {
-  "error": "Too many requests per second. Maximum requests allowed are 1req/2sec Please try again later!"
+  "error": "Too many requests per second. Maximum requests allowed are 1req/2sec Please try again later!",
   "error_code": 5
 }
 ```
