@@ -19,7 +19,6 @@ function r(url, options) {
   return new Promise((resolve, reject) => {
     const qs = options ? `?${querystring.stringify(options)}` : ''
     const finalUrl = `${url}${qs}`
-    console.log(finalUrl)
     const req = https.get(finalUrl, res => {
       let body = ''
       res.on('data', chunk => {
@@ -116,7 +115,6 @@ function proceedExtraParams(params) {
     delete result.ranked
   }
 
-  console.log(result)
   return result
 }
 
