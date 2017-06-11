@@ -138,10 +138,10 @@ The `json_extended` format is:
     "size": 5100226269,
     "pubdate": "2017-05-15 09:37:27 +0000",
     "episode_info": { 
-        imdb: "tt3315342",
-        tvrage: null,
-        tvdb: null,
-        themoviedb: "263115" 
+        "imdb": "tt3315342",
+        "tvrage": null,
+        "tvdb": null,
+        "themoviedb": "263115" 
     }
 }
 ```
