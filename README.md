@@ -4,7 +4,7 @@ This is an unofficial nodejs api wrapper for rarbg.to website.
 
 [![Build Status](https://travis-ci.org/serenader2014/rarbg-api.svg?branch=master)](https://travis-ci.org/serenader2014/rarbg-api)
 [![npm module](https://badge.fury.io/js/rarbg-api.svg)](https://www.npmjs.org/package/rarbg-api)
-[![dependencies](https://david-dm.org/serenader2014/rarbg-api.svg](https://david-dm.org/serenader2014/rarbg-api.svg)
+[![dependencies](https://david-dm.org/serenader2014/rarbg-api.svg)](https://david-dm.org/serenader2014/rarbg-api.svg)
 
 # Installation
 
