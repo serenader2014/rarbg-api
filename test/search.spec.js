@@ -4,6 +4,14 @@ const search = require('../lib/index').search
 should()
 
 describe('search api test', function() {
+  beforeEach(function(done) {
+    this.timeout(60000)
+    // ensure every test wait 2sec before sending the real request,
+    // because of the api's frequency limitation.
+    setTimeout(function() {
+      done()
+    }, 2000)
+  })
   this.timeout(60000)
 
   it('search torrent using keyword', function() {
