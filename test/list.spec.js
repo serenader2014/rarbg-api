@@ -1,4 +1,4 @@
-const list = require('../index').list
+const list = require('../lib/index').list
 const should = require('chai').should
 const constants = require('../src/constants')
 should()

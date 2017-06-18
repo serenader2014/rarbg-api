@@ -50,9 +50,7 @@ function getToken() {
 }
 
 function request(url, options) {
-  return new Promise(resolve => {
-    resolve(token.get() || getToken())
-  }).then(currentToken => {
+  return Promise.resolve(token.get() || getToken()).then(currentToken => {
     options = options || {}
     options.token = currentToken
     return r(url, options)

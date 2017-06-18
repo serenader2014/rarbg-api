@@ -1,5 +1,5 @@
 const should = require('chai').should
-const search = require('../index').search
+const search = require('../lib/index').search
 
 should()
 

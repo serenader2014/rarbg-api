@@ -4,16 +4,16 @@ const request = utils.request
 const proceedExtraParams = utils.proceedExtraParams
 
 module.exports = function search(keyword, options, type) {
-  const search = {}
+  const searchParams = {}
   if (type && ~['imdb', 'tvdb', 'themoviedb', 'tvrage'].indexOf(type)) {
-    search[`search_${type}`] = keyword
+    searchParams[`search_${type}`] = keyword
   } else {
-    search.search_string = keyword
+    searchParams.search_string = keyword
   }
   const extraParams = proceedExtraParams(options)
   return request(constants.BASE_URL, Object.assign({}, {
       mode: 'search'
-    }, search, extraParams)).then(res => {
+    }, searchParams, extraParams)).then(res => {
     if (res.body.error) {
       return Promise.reject(res.body)
     } else {
