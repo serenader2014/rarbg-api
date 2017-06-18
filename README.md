@@ -2,6 +2,23 @@
 
 This is an unofficial nodejs api wrapper for rarbg.to website.
 
+[![Build Status](https://travis-ci.org/serenader2014/rarbg-api.svg?branch=master)](https://travis-ci.org/serenader2014/rarbg-api)
+[![npm module](https://badge.fury.io/js/rarbg-api.svg)](https://www.npmjs.org/package/rarbg-api)
+[![dependencies](https://david-dm.org/serenader2014/rarbg-api.svg](https://david-dm.org/serenader2014/rarbg-api.svg)
+
+# Installation
+
+First download this package from npm registry
+
+```bash
+npm i --save rarbg-api
+```
+
+and require it from your project:
+
+```javascript
+const rarbgApi = require('rarbg-api')
+```
 
 # API
 
@@ -164,6 +181,11 @@ By default the api will return only ranked torrents ( internal ) , scene release
 
 If you want other groups included in the results use the ranked parameter with a value of 0 to get them included.
 
+# Test
+
+Clone this project, and install the dependencies `npm i`, and run `npm run test` to see the test result.
+
+Note that sometimes the test will fail because of the network problem. Currently all the tests timeout is 60000ms, if your network is poor, you may encounter test timeout error.
 
 # Limitation
 
