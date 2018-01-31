@@ -2,6 +2,15 @@ const https = require('https')
 const querystring = require('querystring')
 const baseUrl = require('./constants').BASE_URL
 
+function sleep(second) {
+  second = second || 1
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, second * 1000)
+  })
+}
+
 const token = (() => {
   let currentToken = ''
   return {
@@ -55,10 +64,16 @@ function request(url, options) {
     options.token = currentToken
     return r(url, options)
   }).then(res => {
-    if (res.body && res.body.error && res.body.error_code == 4) {
-      // token expired
-      token.set(null)
-      return request(url, options)
+    if (res.body && res.body.error) {
+      if (res.body.error_code == 4) {
+        // token expired
+        token.set(null)
+        return request(url, options)
+      } else if (res.body.error_code == 5) {
+        // Too many requests per second
+        return sleep(2).then(() => request(url, options))
+      }
+      return res
     } else {
       return res
     }
