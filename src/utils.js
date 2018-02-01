@@ -2,6 +2,17 @@ const https = require('https')
 const querystring = require('querystring')
 const baseUrl = require('./constants').BASE_URL
 
+const debug = {}
+const ENV = process.env.NODE_ENV
+Object.keys(console).forEach(method => {
+  debug[method] = function() {
+    if (ENV === 'debug' || ENV === 'test') {
+      const args = [new Date()].concat([].slice.call(arguments))
+      console[method].apply(console, args)
+    }
+  }
+})
+
 function sleep(second) {
   second = second || 1
   return new Promise(resolve => {
@@ -28,6 +39,7 @@ function r(url, options) {
   return new Promise((resolve, reject) => {
     const qs = options ? `?${querystring.stringify(options)}` : ''
     const finalUrl = `${url}${qs}`
+    debug.log(`request url: ${finalUrl}`)
     const req = https.get(finalUrl, res => {
       let body = ''
       res.on('data', chunk => {
@@ -36,7 +48,9 @@ function r(url, options) {
       res.on('end', () => {
         try {
           body = JSON.parse(body)
-        } catch (e) {}
+        } catch (e) {
+          debug.error(`request error: ${e}`)
+        }
         resolve({
           status: res.statusCode,
           headers: res.headers,
@@ -46,6 +60,7 @@ function r(url, options) {
     })
 
     req.on('error', err => {
+      debug.error(`request failed: ${err}`)
       reject(err)
     })
     req.end()
@@ -67,10 +82,12 @@ function request(url, options) {
     if (res.body && res.body.error) {
       if (res.body.error_code == 4) {
         // token expired
+        debug.warn(`token expired: ${token.get()}`)
         token.set(null)
         return request(url, options)
       } else if (res.body.error_code == 5) {
         // Too many requests per second
+        debug.warn(`too many request`)
         return sleep(2).then(() => request(url, options))
       }
       return res
