@@ -10,6 +10,9 @@ pipeline:
     username: ${NPM_USERNAME}
     password: ${NPM_PASSWORD}
     email: ${NPM_EMAIL}
+    when:
+      matrix:
+        NODE_VERSION: 6
 matrix:
   NODE_VERSION:
     - 6
