@@ -5,6 +5,11 @@ pipeline:
       - npm install
       - npm run build
       - npm run test
+  publish:
+    image: plugins/npm
+    username: ${NPM_USERNAME}
+    password: ${NPM_PASSWORD}
+    email: ${NPM_EMAIL}
 matrix:
   NODE_VERSION:
     - 6
