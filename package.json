@@ -1,6 +1,6 @@
 {
   "name": "rarbg-api",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A simple node.js wrapper for rarbg.to api",
   "main": "lib/index.js",
   "scripts": {
