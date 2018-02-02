@@ -7,9 +7,8 @@ pipeline:
       - npm run test
   publish:
     image: plugins/npm
-    username: ${NPM_USERNAME}
-    password: ${NPM_PASSWORD}
     email: ${NPM_EMAIL}
+    secrets: [ npm_username, npm_password, npm_email ]
     when:
       matrix:
         NODE_VERSION: 6
