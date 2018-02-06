@@ -1,11 +1,16 @@
 {
   "name": "rarbg-api",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A simple node.js wrapper for rarbg.to api",
   "main": "lib/index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha test/*.spec.js",
     "build": "babel src -d lib"
+  },
+  "homepage": "https://github.com/serenader2014/rarbg-api",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/serenader2014/rarbg-api"
   },
   "keywords": [
     "torrent",
