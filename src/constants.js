@@ -1,4 +1,6 @@
 const BASE_URL = 'https://torrentapi.org/pubapi_v2.php'
+const APP_ID = 'rarbg-api-nodejs'
+const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 const CATEGORY = {
   XXX: [4],
   MOVIES_XVID: [14],
@@ -37,5 +39,7 @@ CATEGORY.NON_XXX = Object.keys(CATEGORY).filter(category => category != 'XXX').r
 
 module.exports = {
   BASE_URL,
-  CATEGORY
+  CATEGORY,
+  APP_ID,
+  UA
 }

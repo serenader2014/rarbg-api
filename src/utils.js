@@ -1,6 +1,9 @@
 const https = require('https')
+const parseUrl = require('url').parse
 const querystring = require('querystring')
 const baseUrl = require('./constants').BASE_URL
+const UA = require('./constants').UA
+const APP_ID = require('./constants').APP_ID
 
 const debug = {}
 const ENV = process.env.NODE_ENV
@@ -40,7 +43,11 @@ function r(url, options) {
     const qs = options ? `?${querystring.stringify(options)}` : ''
     const finalUrl = `${url}${qs}`
     debug.log(`request url: ${finalUrl}`)
-    const req = https.get(finalUrl, res => {
+    const req = https.request(Object.assign(parseUrl(finalUrl), {
+      headers: {
+        'User-Agent': UA
+      }
+    }), res => {
       let body = ''
       res.on('data', chunk => {
         body += chunk
@@ -69,7 +76,8 @@ function r(url, options) {
 
 function getToken() {
   return r(baseUrl, {
-    get_token: 'get_token'
+    get_token: 'get_token',
+    app_id: APP_ID
   }).then(res => token.set(res.body.token))
 }
 
@@ -107,7 +115,7 @@ function proceedExtraParams(params) {
     min_leechers: null,
     format: 'json_extended',
     ranked: null,
-    app_id: 'rarbg-api-nodejs'
+    app_id: APP_ID
   }
 
   const result = {}
