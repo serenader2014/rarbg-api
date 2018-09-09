@@ -99,6 +99,10 @@ function request(url, options) {
         return sleep(2).then(() => request(url, options))
       }
       return res
+    } else if (!res.body) {
+      // Too many requests per second
+      debug.warn(`too many request`)
+      return sleep(2).then(() => request(url, options))
     } else {
       return res
     }
