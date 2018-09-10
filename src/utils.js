@@ -43,11 +43,14 @@ function r(url, options) {
     const qs = options ? `?${querystring.stringify(options)}` : ''
     const finalUrl = `${url}${qs}`
     debug.log(`request url: ${finalUrl}`)
-    const req = https.request(Object.assign(parseUrl(finalUrl), {
+    let options = {
       headers: {
         'User-Agent': UA
-      }
-    }), res => {
+      },
+    };
+    if(process.env.LOCAL_ADDRESS) 
+      options.localAddress = process.env.LOCAL_ADDRESS;
+    const req = https.request(Object.assign(parseUrl(finalUrl), options), res => {
       let body = ''
       res.on('data', chunk => {
         body += chunk
