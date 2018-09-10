@@ -20,6 +20,15 @@ and require it from your project:
 const rarbgApi = require('rarbg-api')
 ```
 
+# Environment Flags
+#### **NODE_ENV**
+- Can be set to `debug` to see debug messages and errors
+#### **LOCAL_ADDRESS**
+- Can be set to a network interface ip address in order to send requests from that source
+- See [http.request.options](https://nodejs.org/api/http.html#http_http_request_url_options_callback) for more details
+
+    
+
 # API
 
 ### .list([options: Object]): Array
