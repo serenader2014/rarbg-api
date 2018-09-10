@@ -43,11 +43,14 @@ function r(url, options) {
     const qs = options ? `?${querystring.stringify(options)}` : ''
     const finalUrl = `${url}${qs}`
     debug.log(`request url: ${finalUrl}`)
-    const req = https.request(Object.assign(parseUrl(finalUrl), {
+    let requestOptions = {
       headers: {
         'User-Agent': UA
-      }
-    }), res => {
+      },
+    };
+    if(process.env.LOCAL_ADDRESS) 
+      requestOptions.localAddress = process.env.LOCAL_ADDRESS;
+    const req = https.request(Object.assign(parseUrl(finalUrl), requestOptions), res => {
       let body = ''
       res.on('data', chunk => {
         body += chunk
@@ -99,6 +102,10 @@ function request(url, options) {
         return sleep(2).then(() => request(url, options))
       }
       return res
+    } else if (!res.body) {
+      // Too many requests per second
+      debug.warn(`too many request`)
+      return sleep(2).then(() => request(url, options))
     } else {
       return res
     }
