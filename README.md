@@ -93,7 +93,7 @@ Some of the apis support category filtering and sorting, and other options. All 
 
 ### category
 
-You can specify a category to filter the torrent. Category infomations can be imported by `require('./index').CATEGORY`. This options support an array.
+You can specify a category to filter the torrent. Category information can be imported by `require('./index').CATEGORY`. This options support an array.
 
 Eg: 
 
@@ -106,6 +106,18 @@ rarbgApi.list({
 ```
 
 The above example will list latest movie torrents.
+
+##4K Support
+```javascript
+const rarbgApi = require('./index')
+
+rarbgApi.list({
+  category: rarbgApi.CATEGORY['4K']
+}).then(data => console.log(data))
+```
+
+The above example will list latest 4K movie torrents.
+
 
 ### limit
 
@@ -192,7 +204,7 @@ If you want other groups included in the results use the ranked parameter with a
 
 # Test
 
-Clone this project, and install the dependencies `npm i`, and run `npm run test` to see the test result.
+Clone this project, and install the dependencies `npm i`, `npm run build` and run `npm run test` to see the test result.
 
 Note that sometimes the test will fail because of the network problem. Currently all the tests timeout is 60000ms, if your network is poor, you may encounter test timeout error.
 

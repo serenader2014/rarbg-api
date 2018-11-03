@@ -2,6 +2,9 @@ const BASE_URL = 'https://torrentapi.org/pubapi_v2.php'
 const APP_ID = 'rarbg-api-nodejs'
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 const CATEGORY = {
+  '4K_MOVIES_X264_4k': [50],
+  '4K_X265_4k': [51],
+  '4k_X264_4k_HDR': [52],
   XXX: [4],
   MOVIES_XVID: [14],
   MOVIES_XVID_720P: [48],
@@ -24,7 +27,7 @@ const CATEGORY = {
   EBOOKS: [35]
 }
 
-const majorCategory = ['MOVIES', 'TV', 'GAMES', 'MUSIC']
+const majorCategory = ['4K', 'MOVIES', 'TV', 'GAMES', 'MUSIC']
 
 majorCategory.forEach(c => {
   const reg = new RegExp(c, 'i')
