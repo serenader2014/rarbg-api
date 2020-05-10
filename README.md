@@ -107,7 +107,7 @@ rarbgApi.list({
 
 The above example will list latest movie torrents.
 
-##4K Support
+## 4K Support
 ```javascript
 const rarbgApi = require('./index')
 

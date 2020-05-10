@@ -26,7 +26,7 @@ describe('list api test', function() {
   it('should list torrent using the general 4K category', function() {
       return list({ category: constants.CATEGORY['4K'] }).then(data => {
           data.length.should.above(0)
-          data[0].category.toLowerCase().should.equal('movies/x265/4k')
+          data[0].category.toLowerCase().should.contains('x265/4k')
       })
   })
 

@@ -96,7 +96,7 @@ function request(url, options) {
         debug.warn(`token expired: ${token.get()}`)
         token.set(null)
         return request(url, options)
-      } else if (res.body.error_code == 5) {
+      } else if (res.body.error_code == 5 || res.body.error_code == 20) {
         // Too many requests per second
         debug.warn(`too many request`)
         return sleep(2).then(() => request(url, options))
